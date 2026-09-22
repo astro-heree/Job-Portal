@@ -1,0 +1,36 @@
+# Environment
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.log
+
+# Node / frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Docker volumes mounted locally (uploads dev data, if ever bind-mounted)
+backend/uploads/
+
+# Alembic (keep versions, ignore nothing extra — placeholder for clarity)
