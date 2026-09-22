@@ -5,7 +5,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from app.core.config import settings
 from app.core.error_handlers import register_error_handlers
 from app.core.rate_limit import limiter
-from app.routers import auth, health, jobs
+from app.routers import applications, auth, health, jobs
 
 app = FastAPI(title="Job Portal API")
 
@@ -25,3 +25,4 @@ register_error_handlers(app)
 app.include_router(health.router)
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(jobs.router, prefix="/api/v1")
+app.include_router(applications.router, prefix="/api/v1")
