@@ -47,6 +47,19 @@ services:
     networks:
       - jobportal
 
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+    restart: unless-stopped
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+    networks:
+      - jobportal
+
 volumes:
   pgdata:
   resume_uploads:
