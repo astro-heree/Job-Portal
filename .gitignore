@@ -25,9 +25,10 @@ coverage/
 htmlcov/
 .coverage
 
-# Editor / OS
+# Editor / OS / local tooling
 .vscode/
 .idea/
+.claude/
 .DS_Store
 *.swp
 
