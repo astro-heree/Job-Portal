@@ -77,3 +77,17 @@ export function getFieldErrors(error: unknown): Record<string, string[]> {
   }
   return {};
 }
+
+/** Saves a Blob fetched via the authenticated axios client to disk. A plain
+ * `<a href="/api/...">` can't be used for protected downloads like resumes --
+ * a browser navigation sends no Authorization header, so it would just 401. */
+export function downloadBlob(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}

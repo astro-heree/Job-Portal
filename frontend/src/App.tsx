@@ -6,6 +6,14 @@ import { JobDetailsPage } from "./pages/candidate/JobDetailsPage";
 import { JobSearchPage } from "./pages/candidate/JobSearchPage";
 import { MyApplicationsPage } from "./pages/candidate/MyApplicationsPage";
 import { CandidateProfilePage } from "./pages/candidate/ProfilePage";
+import { ApplicantsPage } from "./pages/hr/ApplicantsPage";
+import { CandidateDetailPage } from "./pages/hr/CandidateDetailPage";
+import { CandidateDirectoryPage } from "./pages/hr/CandidateDirectoryPage";
+import { CreateJobPage } from "./pages/hr/CreateJobPage";
+import { EditJobPage } from "./pages/hr/EditJobPage";
+import { HRDashboardPage } from "./pages/hr/HRDashboardPage";
+import { HRProfilePage } from "./pages/hr/HRProfilePage";
+import { MyJobsPage } from "./pages/hr/MyJobsPage";
 import { LoginPage } from "./pages/public/LoginPage";
 import { RegisterPage } from "./pages/public/RegisterPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
@@ -99,6 +107,70 @@ function App() {
           element={
             <ProtectedRoute allowedRole="CANDIDATE">
               <CandidateProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr/dashboard"
+          element={
+            <ProtectedRoute allowedRole="HR">
+              <HRDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr/jobs"
+          element={
+            <ProtectedRoute allowedRole="HR">
+              <MyJobsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr/jobs/new"
+          element={
+            <ProtectedRoute allowedRole="HR">
+              <CreateJobPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr/jobs/:jobId/edit"
+          element={
+            <ProtectedRoute allowedRole="HR">
+              <EditJobPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr/jobs/:jobId/applicants"
+          element={
+            <ProtectedRoute allowedRole="HR">
+              <ApplicantsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr/candidates"
+          element={
+            <ProtectedRoute allowedRole="HR">
+              <CandidateDirectoryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr/candidates/:candidateId"
+          element={
+            <ProtectedRoute allowedRole="HR">
+              <CandidateDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr/profile"
+          element={
+            <ProtectedRoute allowedRole="HR">
+              <HRProfilePage />
             </ProtectedRoute>
           }
         />
