@@ -1,0 +1,159 @@
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { getMyProfile, updateMyProfile, uploadResume } from "../../api/candidates";
+import { getErrorMessage } from "../../api/client";
+import { ErrorBanner } from "../../components/ErrorBanner";
+import { FormField } from "../../components/FormField";
+import { Layout } from "../../components/Layout";
+import { Spinner } from "../../components/Spinner";
+import type { CandidateProfile } from "../../types";
+
+export function CandidateProfilePage() {
+  const [profile, setProfile] = useState<CandidateProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const [headline, setHeadline] = useState("");
+  const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
+  const [experienceYears, setExperienceYears] = useState("");
+  const [skillsInput, setSkillsInput] = useState("");
+
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [resumeError, setResumeError] = useState<string | null>(null);
+  const [isUploadingResume, setIsUploadingResume] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    getMyProfile()
+      .then((data) => {
+        setProfile(data);
+        setHeadline(data.headline ?? "");
+        setPhone(data.phone ?? "");
+        setLocation(data.location ?? "");
+        setExperienceYears(data.experience_years != null ? String(data.experience_years) : "");
+        setSkillsInput(data.skills.join(", "));
+      })
+      .catch((err) => setLoadError(getErrorMessage(err)))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSaveError(null);
+    setSaveSuccess(false);
+    setIsSaving(true);
+    try {
+      const updated = await updateMyProfile({
+        headline: headline.trim() || null,
+        phone: phone.trim() || null,
+        location: location.trim() || null,
+        experience_years: experienceYears.trim() ? Number(experienceYears) : null,
+        skills: skillsInput
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+      });
+      setProfile(updated);
+      setSaveSuccess(true);
+    } catch (err) {
+      setSaveError(getErrorMessage(err));
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function handleResumeSelected() {
+    const file = fileInputRef.current?.files?.[0];
+    if (!file) return;
+
+    setResumeError(null);
+    setIsUploadingResume(true);
+    try {
+      const updated = await uploadResume(file);
+      setProfile(updated);
+    } catch (err) {
+      setResumeError(getErrorMessage(err));
+    } finally {
+      setIsUploadingResume(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <h1 className="text-2xl font-semibold text-slate-900">My Profile</h1>
+      <ErrorBanner message={loadError} />
+
+      {profile && (
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4 rounded-lg border border-slate-200 bg-white p-6 lg:col-span-2"
+          >
+            <ErrorBanner message={saveError} />
+            {saveSuccess && (
+              <p className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                Profile updated.
+              </p>
+            )}
+            <FormField label="Full name" value={profile.full_name} disabled />
+            <FormField label="Email" value={profile.email} disabled />
+            <FormField label="Headline" value={headline} onChange={(e) => setHeadline(e.target.value)} />
+            <FormField label="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <FormField label="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
+            <FormField
+              label="Years of experience"
+              type="number"
+              min={0}
+              max={60}
+              step="0.5"
+              value={experienceYears}
+              onChange={(e) => setExperienceYears(e.target.value)}
+            />
+            <FormField
+              label="Skills (comma-separated)"
+              value={skillsInput}
+              onChange={(e) => setSkillsInput(e.target.value)}
+              placeholder="Python, React, SQL"
+            />
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="mt-2 w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+            >
+              {isSaving ? "Saving…" : "Save changes"}
+            </button>
+          </form>
+
+          <div className="rounded-lg border border-slate-200 bg-white p-6">
+            <h2 className="mb-3 font-semibold text-slate-900">Resume</h2>
+            <ErrorBanner message={resumeError} />
+            <p className="mb-3 text-sm text-slate-500">
+              {profile.has_resume ? "A resume is on file (PDF)." : "No resume uploaded yet."}
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/pdf"
+              onChange={handleResumeSelected}
+              disabled={isUploadingResume}
+              className="text-sm"
+            />
+            {isUploadingResume && <p className="mt-2 text-sm text-slate-500">Uploading…</p>}
+          </div>
+        </div>
+      )}
+    </Layout>
+  );
+}
