@@ -197,7 +197,7 @@ spoofed `Content-Type: application/pdf` header but non-PDF bytes, oversized file
 rejected), HR profile, dashboard stat aggregation, and unit tests for the ATS scoring
 heuristic.
 
-### Frontend (21 tests, Vitest + React Testing Library)
+### Frontend (25 tests, Vitest + React Testing Library)
 
 ```bash
 cd frontend
@@ -207,9 +207,11 @@ npm run test
 
 Covers `AuthContext` (token rehydration, login, logout), `ProtectedRoute` (redirect logic for
 unauthenticated users and role mismatches), `LoginPage` and `RegisterPage` (client-side
-validation blocking the API call, server errors surfaced, redirect on success), and one
+validation blocking the API call, server errors surfaced, redirect on success), one
 representative page per role (`JobSearchPage`'s debounced search, `MyJobsPage`'s
-activate/deactivate action).
+activate/deactivate action), and `BulkEmailDialog` (template selection prefills/clears the
+subject and body, the real send call goes out with the right recipients and text, validation
+and server-error paths).
 
 ## Security notes
 
