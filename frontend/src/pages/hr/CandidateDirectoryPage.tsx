@@ -171,8 +171,9 @@ export function CandidateDirectoryPage() {
 
       <BulkEmailDialog
         isOpen={isBulkEmailOpen}
-        recipientCount={selectedIds.size}
+        recipientIds={Array.from(selectedIds)}
         onClose={() => setIsBulkEmailOpen(false)}
+        onSent={() => setSelectedIds(new Set())}
       />
     </Layout>
   );

@@ -133,17 +133,20 @@ You can also register a fresh account of either role from the app itself.
    they've applied to your jobs. Filter by name/headline, location, skills (a case-insensitive
    "includes" match — searching "script" finds "TypeScript"), minimum years of experience, and
    **maximum** expected salary (a budget ceiling — candidates expecting at most that much).
-   Select several candidates with the checkboxes and use **Email
-   selected** to try the bulk-email flow — it's an intentional beta placeholder (see
-   [Known limitations](#known-limitations)): it collects a subject/message and confirms
-   "N candidates will receive the email shortly", but nothing is actually sent. Open a
-   candidate's profile to view their full details, **view their resume in-app** (rendered
-   inline, not just downloaded) or download it, or send them a real in-app message.
+   Select several candidates with the checkboxes and use **Email selected** to send a real,
+   templated bulk message: pick "Shortlisted — moving to next round", "Application update —
+   not moving forward", or "Custom message" (free text), edit the pre-filled subject/body if
+   you like, and send. It's the same in-app messaging system as the single-candidate "Send a
+   message" feature below — every recipient gets an actual `Message` row and sees it land in
+   their Inbox immediately, there's no fake confirmation step. Open a candidate's profile to
+   view their full details, **view their resume in-app** (rendered inline, not just
+   downloaded) or download it, or send them a single real in-app message.
 6. **Profile** — edit your company name and designation.
 
 ### As a Candidate (e.g. `user@test.com`)
 
-1. **Dashboard** — your application counts by status and unread message count.
+1. **Dashboard** — total/applied/shortlisted/rejected application counts, unread message
+   count, and a status-breakdown chart of your own applications.
 2. **Find Jobs** — search by keyword, filter by location or employment type; only active jobs
    are shown.
 3. **Job details** — full description, skills, formatted experience/salary ranges, and an
@@ -251,10 +254,10 @@ security and testing specifically):
   would need CSRF protection in exchange.
 - **No password reset or email verification.** There's no email provider in this stack, so
   registration trusts any syntactically valid email as-is.
-- **No real email delivery.** The "inbox" is entirely in-app; HR's messages never leave the
-  database. The candidate directory's **bulk email** action is an even more explicit version
-  of this same gap: it's a UI-only beta stub (subject/message form, a client-side confirmation)
-  with no backend endpoint behind it at all — nothing is sent, logged, or persisted.
+- **No real email delivery.** The "inbox", including the candidate directory's templated
+  **bulk email** action, is entirely in-app — every message is a real, persisted `Message` row
+  that shows up in the candidate's Inbox, but there's no email provider in this stack, so
+  nothing is ever delivered to an actual mailbox outside the app.
 - **The ATS match score is a transparent, structured-data heuristic** (skill overlap +
   experience-range fit), not resume parsing or NLP. It's honest about what it is, not a claim
   of AI matching.

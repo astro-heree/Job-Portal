@@ -1,41 +1,91 @@
 import { useState, type FormEvent } from "react";
+import { getErrorMessage } from "../api/client";
+import { sendBulkMessage } from "../api/messages";
 import { Button } from "./Button";
-import { FormField, FormTextArea } from "./FormField";
+import { ErrorBanner } from "./ErrorBanner";
+import { FormField, FormSelect, FormTextArea } from "./FormField";
 
 interface BulkEmailDialogProps {
   isOpen: boolean;
-  recipientCount: number;
+  recipientIds: string[];
   onClose: () => void;
+  onSent?: () => void;
 }
 
-/**
- * Beta placeholder: no email provider is wired up yet, so this only
- * collects the subject/message and shows a confirmation -- nothing is
- * sent and nothing is persisted. Intentional scope, not a stub left by
- * accident (see README "Known limitations" once this ships).
- */
-export function BulkEmailDialog({ isOpen, recipientCount, onClose }: BulkEmailDialogProps) {
-  const [subject, setSubject] = useState("");
-  const [body, setBody] = useState("");
+type TemplateKey = "shortlist" | "rejection" | "custom";
+
+const TEMPLATES: Record<Exclude<TemplateKey, "custom">, { label: string; subject: string; body: string }> = {
+  shortlist: {
+    label: "Shortlisted — moving to next round",
+    subject: "You've been shortlisted — next steps",
+    body: "Hi,\n\nGreat news! We've reviewed your application and would like to move you forward to the next round. Our team will be in touch shortly with more details.\n\nBest regards",
+  },
+  rejection: {
+    label: "Application update — not moving forward",
+    subject: "Update on your application",
+    body: "Hi,\n\nThank you for your interest and for taking the time to apply. After careful consideration, we've decided not to move forward with your application at this time. We appreciate your interest and wish you the best in your job search.\n\nBest regards",
+  },
+};
+
+const TEMPLATE_OPTIONS: { key: TemplateKey; label: string }[] = [
+  { key: "shortlist", label: TEMPLATES.shortlist.label },
+  { key: "rejection", label: TEMPLATES.rejection.label },
+  { key: "custom", label: "Custom message" },
+];
+
+export function BulkEmailDialog({ isOpen, recipientIds, onClose, onSent }: BulkEmailDialogProps) {
+  const [template, setTemplate] = useState<TemplateKey>("shortlist");
+  const [subject, setSubject] = useState(TEMPLATES.shortlist.subject);
+  const [body, setBody] = useState(TEMPLATES.shortlist.body);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [isSending, setIsSending] = useState(false);
   const [hasSent, setHasSent] = useState(false);
+  const [sentCount, setSentCount] = useState(0);
+
+  const recipientCount = recipientIds.length;
 
   if (!isOpen) return null;
 
-  function handleSend(event: FormEvent<HTMLFormElement>) {
+  function handleTemplateChange(key: TemplateKey) {
+    setTemplate(key);
+    if (key === "custom") {
+      setSubject("");
+      setBody("");
+    } else {
+      setSubject(TEMPLATES[key].subject);
+      setBody(TEMPLATES[key].body);
+    }
+  }
+
+  async function handleSend(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setValidationError(null);
+    setSendError(null);
     if (!subject.trim() || !body.trim()) {
       setValidationError("Subject and message are required.");
       return;
     }
-    setValidationError(null);
-    setHasSent(true);
+
+    setIsSending(true);
+    try {
+      await sendBulkMessage(recipientIds, subject.trim(), body.trim());
+      setSentCount(recipientIds.length);
+      setHasSent(true);
+      onSent?.();
+    } catch (err) {
+      setSendError(getErrorMessage(err));
+    } finally {
+      setIsSending(false);
+    }
   }
 
   function handleClose() {
-    setSubject("");
-    setBody("");
+    setTemplate("shortlist");
+    setSubject(TEMPLATES.shortlist.subject);
+    setBody(TEMPLATES.shortlist.body);
     setValidationError(null);
+    setSendError(null);
     setHasSent(false);
     onClose();
   }
@@ -56,7 +106,7 @@ export function BulkEmailDialog({ isOpen, recipientCount, onClose }: BulkEmailDi
                 </svg>
               </div>
               <p className="pt-1.5 text-sm text-slate-700">
-                {recipientCount} candidate{recipientCount === 1 ? "" : "s"} will receive the email shortly.
+                Message sent to {sentCount} candidate{sentCount === 1 ? "" : "s"}. It's in their inbox now.
               </p>
             </div>
             <div className="mt-6 flex justify-end">
@@ -71,17 +121,31 @@ export function BulkEmailDialog({ isOpen, recipientCount, onClose }: BulkEmailDi
               <h2 className="font-semibold text-slate-900">
                 Email {recipientCount} candidate{recipientCount === 1 ? "" : "s"}
               </h2>
-              <p className="mt-1 text-xs text-slate-500">Beta feature — emails aren't actually sent yet.</p>
+              <p className="mt-1 text-xs text-slate-500">
+                Sends a real message — it lands directly in each candidate's inbox.
+              </p>
             </div>
+            <ErrorBanner message={sendError} />
             {validationError && <p className="text-sm text-red-600">{validationError}</p>}
+            <FormSelect
+              label="Template"
+              value={template}
+              onChange={(e) => handleTemplateChange(e.target.value as TemplateKey)}
+            >
+              {TEMPLATE_OPTIONS.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </FormSelect>
             <FormField label="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
             <FormTextArea label="Message" rows={5} value={body} onChange={(e) => setBody(e.target.value)} />
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="secondary" size="sm" onClick={handleClose}>
+              <Button type="button" variant="secondary" size="sm" onClick={handleClose} disabled={isSending}>
                 Cancel
               </Button>
-              <Button type="submit" size="sm">
-                Send
+              <Button type="submit" size="sm" disabled={isSending}>
+                {isSending ? "Sending…" : "Send"}
               </Button>
             </div>
           </form>
