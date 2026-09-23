@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import or_
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session, joinedload
 
 from app.core.exceptions import ConflictError, ForbiddenError, NotFoundError
@@ -94,8 +94,11 @@ def list_jobs(
         like = f"%{q}%"
         query = query.filter(or_(Job.title.ilike(like), Job.description.ilike(like)))
     if skills:
+        # Case-insensitive "includes" match against any listed skill, not an
+        # exact element match -- see the identical fix in candidate_service.
+        skills_as_text = func.array_to_string(Job.skills, ",")
         for skill in skills:
-            query = query.filter(Job.skills.any(skill))
+            query = query.filter(skills_as_text.ilike(f"%{skill}%"))
     if location:
         query = query.filter(Job.location.ilike(f"%{location}%"))
     if employment_type:

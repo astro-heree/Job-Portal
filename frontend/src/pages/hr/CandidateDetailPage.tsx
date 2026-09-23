@@ -6,6 +6,7 @@ import { sendBulkMessage } from "../../api/messages";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { FormField, FormTextArea } from "../../components/FormField";
 import { Layout } from "../../components/Layout";
+import { ResumeViewerDialog } from "../../components/ResumeViewerDialog";
 import { Spinner } from "../../components/Spinner";
 import type { CandidateProfile } from "../../types";
 
@@ -15,6 +16,7 @@ export function CandidateDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [isResumeViewerOpen, setIsResumeViewerOpen] = useState(false);
 
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
@@ -122,13 +124,22 @@ export function CandidateDetailPage() {
         <div className="mt-6">
           <ErrorBanner message={downloadError} />
           {candidate.has_resume ? (
-            <button
-              type="button"
-              onClick={handleDownloadResume}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
-              Download resume
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setIsResumeViewerOpen(true)}
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                View resume
+              </button>
+              <button
+                type="button"
+                onClick={handleDownloadResume}
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+              >
+                Download
+              </button>
+            </div>
           ) : (
             <p className="text-sm text-slate-500">No resume on file.</p>
           )}
@@ -155,6 +166,13 @@ export function CandidateDetailPage() {
           </button>
         </form>
       </div>
+
+      <ResumeViewerDialog
+        isOpen={isResumeViewerOpen}
+        candidateName={candidate.full_name}
+        fetchResume={() => downloadCandidateResume(candidate.user_id)}
+        onClose={() => setIsResumeViewerOpen(false)}
+      />
     </Layout>
   );
 }

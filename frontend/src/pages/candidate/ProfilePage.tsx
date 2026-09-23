@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { getMyProfile, updateMyProfile, uploadResume } from "../../api/candidates";
+import { downloadMyResume, getMyProfile, updateMyProfile, uploadResume } from "../../api/candidates";
 import { getErrorMessage } from "../../api/client";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { FormField } from "../../components/FormField";
 import { Layout } from "../../components/Layout";
+import { ResumeViewerDialog } from "../../components/ResumeViewerDialog";
 import { Spinner } from "../../components/Spinner";
 import type { CandidateProfile } from "../../types";
 
@@ -25,6 +26,7 @@ export function CandidateProfilePage() {
 
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [isUploadingResume, setIsUploadingResume] = useState(false);
+  const [isResumeViewerOpen, setIsResumeViewerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -152,6 +154,15 @@ export function CandidateProfilePage() {
             <p className="mb-3 text-sm text-slate-500">
               {profile.has_resume ? "A resume is on file (PDF)." : "No resume uploaded yet."}
             </p>
+            {profile.has_resume && (
+              <button
+                type="button"
+                onClick={() => setIsResumeViewerOpen(true)}
+                className="mb-3 rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
+              >
+                View resume
+              </button>
+            )}
             <input
               ref={fileInputRef}
               type="file"
@@ -164,6 +175,13 @@ export function CandidateProfilePage() {
           </div>
         </div>
       )}
+
+      <ResumeViewerDialog
+        isOpen={isResumeViewerOpen}
+        candidateName={profile?.full_name ?? "My"}
+        fetchResume={downloadMyResume}
+        onClose={() => setIsResumeViewerOpen(false)}
+      />
     </Layout>
   );
 }

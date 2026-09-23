@@ -10,6 +10,7 @@ import { ErrorBanner } from "../../components/ErrorBanner";
 import { FormField, FormSelect } from "../../components/FormField";
 import { Layout } from "../../components/Layout";
 import { Pagination } from "../../components/Pagination";
+import { ResumeViewerDialog } from "../../components/ResumeViewerDialog";
 import { Spinner } from "../../components/Spinner";
 import { StarRating } from "../../components/StarRating";
 import { StatusBadge } from "../../components/StatusBadge";
@@ -33,6 +34,7 @@ export function ApplicantsPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [pendingBulkStatus, setPendingBulkStatus] = useState<ApplicationStatus | null>(null);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
+  const [viewingResumeFor, setViewingResumeFor] = useState<{ id: string; name: string } | null>(null);
 
   function load() {
     if (!jobId) return;
@@ -199,15 +201,29 @@ export function ApplicantsPage() {
 
                       <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
                         {applicant.has_resume && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleDownloadResume(applicant.candidate_id, applicant.candidate_full_name)
-                            }
-                            className="font-medium text-blue-600 hover:underline"
-                          >
-                            Download resume
-                          </button>
+                          <>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setViewingResumeFor({
+                                  id: applicant.candidate_id,
+                                  name: applicant.candidate_full_name,
+                                })
+                              }
+                              className="font-medium text-blue-600 hover:underline"
+                            >
+                              View resume
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleDownloadResume(applicant.candidate_id, applicant.candidate_full_name)
+                              }
+                              className="font-medium text-blue-600 hover:underline"
+                            >
+                              Download
+                            </button>
+                          </>
                         )}
                         <FormSelect
                           label=""
@@ -242,6 +258,13 @@ export function ApplicantsPage() {
         confirmLabel={isBulkUpdating ? "Updating…" : "Confirm"}
         onConfirm={handleBulkConfirm}
         onCancel={() => setPendingBulkStatus(null)}
+      />
+
+      <ResumeViewerDialog
+        isOpen={viewingResumeFor !== null}
+        candidateName={viewingResumeFor?.name ?? ""}
+        fetchResume={() => downloadCandidateResume(viewingResumeFor!.id)}
+        onClose={() => setViewingResumeFor(null)}
       />
     </Layout>
   );

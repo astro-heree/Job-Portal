@@ -54,8 +54,22 @@ def test_hr_can_search_candidate_directory(client, db_session):
     response = client.get("/api/v1/candidates", params={"skills": "Python"}, headers=auth_header(hr))
     assert response.json()["total"] == 1
 
-    response = client.get("/api/v1/candidates", params={"location": "New York"}, headers=auth_header(hr))
+
+def test_skills_filter_is_a_case_insensitive_substring_match(client, db_session):
+    hr = create_hr(db_session)
+    create_candidate(db_session, full_name="TS Dev", skills=["TypeScript"])
+    create_candidate(db_session, full_name="Py Dev", skills=["python"])
+
+    # "script" is a substring of "TypeScript", not an exact element match
+    response = client.get("/api/v1/candidates", params={"skills": "script"}, headers=auth_header(hr))
+    assert response.status_code == 200
     assert response.json()["total"] == 1
+    assert response.json()["items"][0]["full_name"] == "TS Dev"
+
+    # case-insensitive against a differently-cased stored skill
+    response = client.get("/api/v1/candidates", params={"skills": "PYTHON"}, headers=auth_header(hr))
+    assert response.json()["total"] == 1
+    assert response.json()["items"][0]["full_name"] == "Py Dev"
 
 
 def test_hr_can_filter_directory_by_experience_and_salary(client, db_session):

@@ -78,6 +78,20 @@ def test_search_filters_by_query_and_location(client, db_session):
     assert response.json()["items"][0]["title"] == "Sales Manager"
 
 
+def test_search_skills_filter_is_a_case_insensitive_substring_match(client, db_session):
+    hr = create_hr(db_session)
+    create_job(db_session, hr, title="Frontend Role", skills=["TypeScript"])
+    create_job(db_session, hr, title="Backend Role", skills=["python"])
+
+    response = client.get("/api/v1/jobs", params={"skills": "script"})
+    assert response.json()["total"] == 1
+    assert response.json()["items"][0]["title"] == "Frontend Role"
+
+    response = client.get("/api/v1/jobs", params={"skills": "PYTHON"})
+    assert response.json()["total"] == 1
+    assert response.json()["items"][0]["title"] == "Backend Role"
+
+
 def test_get_inactive_job_is_404_for_public_but_visible_to_owner(client, db_session):
     hr = create_hr(db_session)
     job = create_job(db_session, hr, is_active=False)

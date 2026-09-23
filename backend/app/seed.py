@@ -40,20 +40,20 @@ def run() -> None:
 
         candidates_data = [
             ("candidate1@jobportal.dev", "Alex Chen", "Backend Developer",
-             ["Python", "FastAPI", "PostgreSQL"], 3, "Remote"),
+             ["Python", "FastAPI", "PostgreSQL"], 3, "Remote", "+1-415-555-0101", 125000),
             ("candidate2@jobportal.dev", "Morgan Lee", "Frontend Developer",
-             ["React", "TypeScript", "CSS"], 2, "New York"),
+             ["React", "TypeScript", "CSS"], 2, "New York", "+1-212-555-0102", 95000),
             ("candidate3@jobportal.dev", "Sam Patel", "Full Stack Engineer",
-             ["Python", "React", "PostgreSQL"], 5, "Remote"),
+             ["Python", "React", "PostgreSQL"], 5, "Remote", "+1-650-555-0103", 140000),
             ("candidate4@jobportal.dev", "Jordan Kim", "Data Engineer",
-             ["Python", "SQL", "Airflow"], 4, "San Francisco"),
+             ["Python", "SQL", "Airflow"], 4, "San Francisco", "+1-415-555-0104", 130000),
             ("candidate5@jobportal.dev", "Taylor Brooks", "Junior Developer",
-             ["JavaScript", "HTML", "CSS"], 0.5, "Remote"),
+             ["JavaScript", "HTML", "CSS"], 0.5, "Remote", "+1-312-555-0105", 55000),
             ("candidate6@jobportal.dev", "Casey Rivera", "DevOps Engineer",
-             ["Docker", "Kubernetes", "AWS"], 6, "Austin"),
+             ["Docker", "Kubernetes", "AWS"], 6, "Austin", "+1-512-555-0106", 150000),
         ]
         candidates = []
-        for email, full_name, headline, skills, experience, location in candidates_data:
+        for email, full_name, headline, skills, experience, location, phone, expected_salary in candidates_data:
             user = _create_user(db, email=email, full_name=full_name, role=UserRole.CANDIDATE)
             db.add(
                 CandidateProfile(
@@ -62,6 +62,8 @@ def run() -> None:
                     skills=skills,
                     experience_years=experience,
                     location=location,
+                    phone=phone,
+                    expected_salary=expected_salary,
                 )
             )
             candidates.append(user)

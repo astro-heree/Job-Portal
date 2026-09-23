@@ -1,5 +1,6 @@
 import uuid
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
 from app.core.exceptions import ForbiddenError, NotFoundError
@@ -126,8 +127,13 @@ def search_candidates(
             (User.full_name.ilike(like)) | (CandidateProfile.headline.ilike(like))
         )
     if skills:
+        # `.any(skill)` would require an exact, case-sensitive match against
+        # one array element (so "script" would never match "TypeScript").
+        # Flattening to a delimited string and using ILIKE gives a
+        # case-insensitive "includes" match instead, across any skill.
+        skills_as_text = func.array_to_string(CandidateProfile.skills, ",")
         for skill in skills:
-            query = query.filter(CandidateProfile.skills.any(skill))
+            query = query.filter(skills_as_text.ilike(f"%{skill}%"))
     if location:
         query = query.filter(CandidateProfile.location.ilike(f"%{location}%"))
     if min_experience_years is not None:
