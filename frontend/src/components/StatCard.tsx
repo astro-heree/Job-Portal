@@ -4,7 +4,7 @@ interface StatCardProps {
   label: string;
   value: number;
   icon: ReactNode;
-  accent?: "brand" | "emerald" | "amber" | "slate";
+  accent?: "brand" | "emerald" | "amber" | "slate" | "rose";
 }
 
 const ACCENT_CLASSES: Record<NonNullable<StatCardProps["accent"]>, string> = {
@@ -12,6 +12,7 @@ const ACCENT_CLASSES: Record<NonNullable<StatCardProps["accent"]>, string> = {
   emerald: "bg-emerald-50 text-emerald-600",
   amber: "bg-amber-50 text-amber-600",
   slate: "bg-slate-100 text-slate-600",
+  rose: "bg-rose-50 text-rose-600",
 };
 
 export function StatCard({ label, value, icon, accent = "brand" }: StatCardProps) {
