@@ -63,23 +63,28 @@ Requires Docker and Docker Compose. No other tooling needs to be installed on th
 ```bash
 git clone <this-repo-url>
 cd Job-Portal
-cp .env.example .env
 docker compose up --build
 ```
+
+That's it — no `.env` file is required. Every variable in `docker-compose.yml` has a working
+local default baked in (matching `.env.example`), so the stack boots with zero configuration.
 
 Then open:
 
 - **Frontend**: [http://localhost:3001](http://localhost:3001)
 - **Backend API**: [http://localhost:8001](http://localhost:8001) (health check at `/health`)
 
-On first boot the backend runs its database migrations and — because `SEED_DEMO_DATA=true` in
-`.env.example` — seeds demo accounts, jobs, applications, and messages (see
+On first boot the backend runs its database migrations and — because `SEED_DEMO_DATA` defaults
+to `true` — seeds demo accounts, jobs, applications, and messages (see
 [Test credentials](#test-credentials) below). The seed is idempotent: it checks for a marker
 account before inserting anything, so restarting the stack (without `docker compose down -v`)
 never double-seeds. Data persists across restarts via the `pgdata` and `resume_uploads`
 named volumes; `docker compose down -v` removes it.
 
-No values in `.env.example` are real secrets. `SECRET_KEY` in particular should be replaced
+If you want to override a default (e.g. to point at a different Postgres, or set a real
+`SECRET_KEY`), copy `.env.example` to `.env` and edit it — Compose picks up a `.env` file in
+the project root automatically and it takes priority over the baked-in defaults. None of the
+default values are real secrets; `SECRET_KEY` in particular should be replaced
 (`openssl rand -hex 32`) before this is ever used for anything beyond local review.
 
 ### Ports
