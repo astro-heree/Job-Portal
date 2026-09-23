@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.core.exceptions import ConflictError, ForbiddenError, NotFoundError
 from app.models.application import Application
+from app.models.candidate_profile import CandidateProfile
 from app.models.enums import ApplicationStatus, EmploymentType
 from app.models.job import Job
 from app.models.user import User
@@ -163,6 +164,10 @@ def list_job_applicants(
     *,
     status: ApplicationStatus | None,
     q: str | None,
+    skills: list[str] | None,
+    location: str | None,
+    min_experience_years: float | None,
+    max_salary: int | None,
     min_ats_rating: int | None,
     page_params: PageParams,
 ) -> tuple[list[Application], int]:
@@ -170,6 +175,8 @@ def list_job_applicants(
 
     query = (
         db.query(Application)
+        .join(User, Application.candidate_id == User.id)
+        .join(CandidateProfile, CandidateProfile.user_id == User.id)
         .options(joinedload(Application.candidate).joinedload(User.candidate_profile))
         .filter(Application.job_id == job_id)
     )
@@ -177,9 +184,19 @@ def list_job_applicants(
         query = query.filter(Application.status == status)
     if q:
         like = f"%{q}%"
-        query = query.join(User, Application.candidate_id == User.id).filter(
-            or_(User.full_name.ilike(like), User.email.ilike(like))
-        )
+        query = query.filter(or_(User.full_name.ilike(like), User.email.ilike(like)))
+    if skills:
+        # Same case-insensitive "includes" match as the candidate directory
+        # and job search filters -- not an exact array-element match.
+        skills_as_text = func.array_to_string(CandidateProfile.skills, ",")
+        for skill in skills:
+            query = query.filter(skills_as_text.ilike(f"%{skill}%"))
+    if location:
+        query = query.filter(CandidateProfile.location.ilike(f"%{location}%"))
+    if min_experience_years is not None:
+        query = query.filter(CandidateProfile.experience_years >= min_experience_years)
+    if max_salary is not None:
+        query = query.filter(CandidateProfile.expected_salary <= max_salary)
 
     applications = query.all()
 

@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { BrandMark } from "./BrandMark";
 import { useAuth } from "../context/AuthContext";
 
 interface NavLink {
@@ -21,17 +22,6 @@ const HR_LINKS: NavLink[] = [
   { to: "/hr/candidates", label: "Candidates" },
   { to: "/hr/profile", label: "Profile" },
 ];
-
-function BrandMark() {
-  return (
-    <Link to="/" className="flex items-center gap-2">
-      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">
-        J
-      </span>
-      <span className="text-lg font-bold tracking-tight text-slate-900">Job Portal</span>
-    </Link>
-  );
-}
 
 function UserBadge({ name }: { name: string }) {
   const initial = name.trim().charAt(0).toUpperCase() || "?";

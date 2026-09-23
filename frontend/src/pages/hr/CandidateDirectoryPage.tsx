@@ -17,14 +17,14 @@ export function CandidateDirectoryPage() {
   const [location, setLocation] = useState("");
   const [skillsInput, setSkillsInput] = useState("");
   const [minExperience, setMinExperience] = useState("");
-  const [minSalary, setMinSalary] = useState("");
+  const [maxSalary, setMaxSalary] = useState("");
   const [page, setPage] = useState(1);
 
   const debouncedQ = useDebouncedValue(q);
   const debouncedLocation = useDebouncedValue(location);
   const debouncedSkills = useDebouncedValue(skillsInput);
   const debouncedMinExperience = useDebouncedValue(minExperience);
-  const debouncedMinSalary = useDebouncedValue(minSalary);
+  const debouncedMaxSalary = useDebouncedValue(maxSalary);
 
   const [candidates, setCandidates] = useState<CandidateProfile[]>([]);
   const [pages, setPages] = useState(1);
@@ -37,7 +37,7 @@ export function CandidateDirectoryPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedQ, debouncedLocation, debouncedSkills, debouncedMinExperience, debouncedMinSalary]);
+  }, [debouncedQ, debouncedLocation, debouncedSkills, debouncedMinExperience, debouncedMaxSalary]);
 
   useEffect(() => {
     const skills = debouncedSkills
@@ -52,7 +52,7 @@ export function CandidateDirectoryPage() {
       location: debouncedLocation || undefined,
       skills: skills.length > 0 ? skills : undefined,
       min_experience_years: debouncedMinExperience.trim() ? Number(debouncedMinExperience) : undefined,
-      min_salary: debouncedMinSalary.trim() ? Number(debouncedMinSalary) : undefined,
+      max_salary: debouncedMaxSalary.trim() ? Number(debouncedMaxSalary) : undefined,
       page,
       page_size: 20,
     })
@@ -64,7 +64,7 @@ export function CandidateDirectoryPage() {
       })
       .catch((err) => setError(getErrorMessage(err)))
       .finally(() => setIsLoading(false));
-  }, [debouncedQ, debouncedLocation, debouncedSkills, debouncedMinExperience, debouncedMinSalary, page]);
+  }, [debouncedQ, debouncedLocation, debouncedSkills, debouncedMinExperience, debouncedMaxSalary, page]);
 
   function toggleSelected(candidateId: string) {
     setSelectedIds((current) => {
@@ -99,11 +99,11 @@ export function CandidateDirectoryPage() {
           onChange={(e) => setMinExperience(e.target.value)}
         />
         <FormField
-          label="Min. expected salary ($)"
+          label="Max. expected salary ($)"
           type="number"
           min={0}
-          value={minSalary}
-          onChange={(e) => setMinSalary(e.target.value)}
+          value={maxSalary}
+          onChange={(e) => setMaxSalary(e.target.value)}
         />
       </div>
 

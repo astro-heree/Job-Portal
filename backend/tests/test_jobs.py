@@ -210,6 +210,57 @@ def test_owner_can_list_applicants_sorted_by_ats_rating(client, db_session):
     assert body["items"][0]["candidate_email"] == strong_fit.email
 
 
+def test_applicants_can_be_filtered_by_candidate_attributes(client, db_session):
+    hr = create_hr(db_session)
+    job = create_job(db_session, hr)
+
+    remote_python = create_candidate(
+        db_session,
+        full_name="Remote Python Dev",
+        skills=["Python", "Django"],
+        location="Remote",
+        experience_years=6,
+        expected_salary=90000,
+    )
+    onsite_java = create_candidate(
+        db_session,
+        full_name="Onsite Java Dev",
+        skills=["Java"],
+        location="New York",
+        experience_years=2,
+        expected_salary=180000,
+    )
+    create_application(db_session, job, remote_python)
+    create_application(db_session, job, onsite_java)
+
+    # skills: case-insensitive substring, not exact element match
+    response = client.get(
+        f"/api/v1/jobs/{job.id}/applications", params={"skills": "django"}, headers=auth_header(hr)
+    )
+    assert response.status_code == 200
+    assert response.json()["total"] == 1
+    assert response.json()["items"][0]["candidate_full_name"] == "Remote Python Dev"
+
+    response = client.get(
+        f"/api/v1/jobs/{job.id}/applications", params={"location": "New York"}, headers=auth_header(hr)
+    )
+    assert response.json()["total"] == 1
+    assert response.json()["items"][0]["candidate_full_name"] == "Onsite Java Dev"
+
+    response = client.get(
+        f"/api/v1/jobs/{job.id}/applications", params={"min_experience_years": 5}, headers=auth_header(hr)
+    )
+    assert response.json()["total"] == 1
+    assert response.json()["items"][0]["candidate_full_name"] == "Remote Python Dev"
+
+    # max_salary is a budget ceiling: applicants expecting AT MOST this much
+    response = client.get(
+        f"/api/v1/jobs/{job.id}/applications", params={"max_salary": 100000}, headers=auth_header(hr)
+    )
+    assert response.json()["total"] == 1
+    assert response.json()["items"][0]["candidate_full_name"] == "Remote Python Dev"
+
+
 def test_non_owner_cannot_list_applicants(client, db_session):
     hr1 = create_hr(db_session)
     hr2 = create_hr(db_session)

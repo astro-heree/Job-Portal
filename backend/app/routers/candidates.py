@@ -63,7 +63,7 @@ def search_candidates(
     skills: list[str] | None = Query(default=None),
     location: str | None = None,
     min_experience_years: float | None = Query(default=None, ge=0, le=60),
-    min_salary: int | None = Query(default=None, ge=0),
+    max_salary: int | None = Query(default=None, ge=0),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
     _hr_user: User = Depends(require_role(UserRole.HR)),
@@ -76,7 +76,7 @@ def search_candidates(
         skills=skills,
         location=location,
         min_experience_years=min_experience_years,
-        min_salary=min_salary,
+        max_salary=max_salary,
         page=page_params.page,
         page_size=page_params.page_size,
     )

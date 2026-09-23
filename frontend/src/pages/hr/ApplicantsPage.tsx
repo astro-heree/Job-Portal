@@ -14,6 +14,7 @@ import { ResumeViewerDialog } from "../../components/ResumeViewerDialog";
 import { Spinner } from "../../components/Spinner";
 import { StarRating } from "../../components/StarRating";
 import { StatusBadge } from "../../components/StatusBadge";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import type { ApplicantOut, ApplicationStatus } from "../../types";
 
 const STATUS_OPTIONS: ApplicationStatus[] = ["APPLIED", "SHORTLISTED", "REJECTED"];
@@ -23,7 +24,17 @@ export function ApplicantsPage() {
 
   const [status, setStatus] = useState<ApplicationStatus | "">("");
   const [q, setQ] = useState("");
+  const [skillsInput, setSkillsInput] = useState("");
+  const [location, setLocation] = useState("");
+  const [minExperience, setMinExperience] = useState("");
+  const [maxSalary, setMaxSalary] = useState("");
   const [page, setPage] = useState(1);
+
+  const debouncedQ = useDebouncedValue(q);
+  const debouncedSkills = useDebouncedValue(skillsInput);
+  const debouncedLocation = useDebouncedValue(location);
+  const debouncedMinExperience = useDebouncedValue(minExperience);
+  const debouncedMaxSalary = useDebouncedValue(maxSalary);
 
   const [applicants, setApplicants] = useState<ApplicantOut[]>([]);
   const [pages, setPages] = useState(1);
@@ -36,11 +47,29 @@ export function ApplicantsPage() {
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [viewingResumeFor, setViewingResumeFor] = useState<{ id: string; name: string } | null>(null);
 
+  useEffect(() => {
+    setPage(1);
+  }, [status, debouncedQ, debouncedSkills, debouncedLocation, debouncedMinExperience, debouncedMaxSalary]);
+
   function load() {
     if (!jobId) return;
+    const skills = debouncedSkills
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     setIsLoading(true);
     setError(null);
-    listJobApplicants(jobId, { status: status || undefined, q: q || undefined, page, page_size: 20 })
+    listJobApplicants(jobId, {
+      status: status || undefined,
+      q: debouncedQ || undefined,
+      skills: skills.length > 0 ? skills : undefined,
+      location: debouncedLocation || undefined,
+      min_experience_years: debouncedMinExperience.trim() ? Number(debouncedMinExperience) : undefined,
+      max_salary: debouncedMaxSalary.trim() ? Number(debouncedMaxSalary) : undefined,
+      page,
+      page_size: 20,
+    })
       .then((result) => {
         setApplicants(result.items);
         setPages(result.pages);
@@ -51,7 +80,10 @@ export function ApplicantsPage() {
       .finally(() => setIsLoading(false));
   }
 
-  useEffect(load, [jobId, status, q, page]);
+  useEffect(
+    load,
+    [jobId, status, debouncedQ, debouncedSkills, debouncedLocation, debouncedMinExperience, debouncedMaxSalary, page]
+  );
 
   function toggleSelected(id: string) {
     setSelectedIds((current) => {
@@ -106,16 +138,9 @@ export function ApplicantsPage() {
       </Link>
       <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-900">Applicants</h1>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-3">
         <FormField label="Search by name or email" value={q} onChange={(e) => setQ(e.target.value)} />
-        <FormSelect
-          label="Status"
-          value={status}
-          onChange={(e) => {
-            setStatus(e.target.value as ApplicationStatus | "");
-            setPage(1);
-          }}
-        >
+        <FormSelect label="Status" value={status} onChange={(e) => setStatus(e.target.value as ApplicationStatus | "")}>
           <option value="">All</option>
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
@@ -123,6 +148,29 @@ export function ApplicantsPage() {
             </option>
           ))}
         </FormSelect>
+        <FormField
+          label="Skills (comma-separated)"
+          placeholder="Python, React"
+          value={skillsInput}
+          onChange={(e) => setSkillsInput(e.target.value)}
+        />
+        <FormField label="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <FormField
+          label="Min. experience (years)"
+          type="number"
+          min={0}
+          max={60}
+          step="0.5"
+          value={minExperience}
+          onChange={(e) => setMinExperience(e.target.value)}
+        />
+        <FormField
+          label="Max. expected salary ($)"
+          type="number"
+          min={0}
+          value={maxSalary}
+          onChange={(e) => setMaxSalary(e.target.value)}
+        />
       </div>
 
       {selectedIds.size > 0 && (

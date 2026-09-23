@@ -110,7 +110,7 @@ def search_candidates(
     skills: list[str] | None,
     location: str | None,
     min_experience_years: float | None,
-    min_salary: int | None,
+    max_salary: int | None,
     page: int,
     page_size: int,
 ) -> tuple[list[CandidateProfileOut], int]:
@@ -138,8 +138,11 @@ def search_candidates(
         query = query.filter(CandidateProfile.location.ilike(f"%{location}%"))
     if min_experience_years is not None:
         query = query.filter(CandidateProfile.experience_years >= min_experience_years)
-    if min_salary is not None:
-        query = query.filter(CandidateProfile.expected_salary >= min_salary)
+    if max_salary is not None:
+        # A candidate's *expected* salary is a ceiling on what they'd cost --
+        # HR wants candidates within budget, i.e. expected_salary <= max,
+        # not a floor.
+        query = query.filter(CandidateProfile.expected_salary <= max_salary)
 
     total = query.count()
     users = query.order_by(User.full_name).offset((page - 1) * page_size).limit(page_size).all()

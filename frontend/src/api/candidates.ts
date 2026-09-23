@@ -45,7 +45,7 @@ export interface CandidateSearchParams {
   skills?: string[];
   location?: string;
   min_experience_years?: number;
-  min_salary?: number;
+  max_salary?: number;
   page?: number;
   page_size?: number;
 }

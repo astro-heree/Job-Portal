@@ -125,13 +125,15 @@ You can also register a fresh account of either role from the app itself.
    applicant screen.
 4. **Applicants** (`My Jobs -> View applicants`) — every application for that job, sorted by
    a computed 1–5 star match rating (see [ats.py](backend/app/core/ats.py)), filterable by
-   status or by candidate name/email. Change one applicant's status from its dropdown, or
-   select several with the checkboxes and bulk shortlist/reject (with a confirmation step).
-   View or download a candidate's resume if they've uploaded one.
+   status or by candidate name/email, plus the same skills/location/experience/salary filters
+   described below for the candidate directory. Change one applicant's status from its
+   dropdown, or select several with the checkboxes and bulk shortlist/reject (with a
+   confirmation step). View or download a candidate's resume if they've uploaded one.
 5. **Candidates** — a directory of every candidate on the platform, independent of whether
    they've applied to your jobs. Filter by name/headline, location, skills (a case-insensitive
    "includes" match — searching "script" finds "TypeScript"), minimum years of experience, and
-   minimum expected salary. Select several candidates with the checkboxes and use **Email
+   **maximum** expected salary (a budget ceiling — candidates expecting at most that much).
+   Select several candidates with the checkboxes and use **Email
    selected** to try the bulk-email flow — it's an intentional beta placeholder (see
    [Known limitations](#known-limitations)): it collects a subject/message and confirms
    "N candidates will receive the email shortly", but nothing is actually sent. Open a
@@ -164,7 +166,7 @@ application-scoped endpoint.
 
 ## Running tests
 
-### Backend (78 tests, pytest)
+### Backend (79 tests, pytest)
 
 Runs against a real Postgres database (a separate `<db>_test` database, auto-created), not
 SQLite — the schema uses Postgres `ARRAY` columns with GIN indexes that SQLite doesn't

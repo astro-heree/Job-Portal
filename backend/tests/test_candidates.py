@@ -84,12 +84,16 @@ def test_hr_can_filter_directory_by_experience_and_salary(client, db_session):
     assert response.json()["total"] == 1
     assert response.json()["items"][0]["full_name"] == "Senior Dev"
 
-    response = client.get("/api/v1/candidates", params={"min_salary": 100000}, headers=auth_header(hr))
+    # max_salary is a budget ceiling: candidates expecting AT MOST this much.
+    response = client.get("/api/v1/candidates", params={"max_salary": 100000}, headers=auth_header(hr))
     assert response.json()["total"] == 1
-    assert response.json()["items"][0]["full_name"] == "Senior Dev"
+    assert response.json()["items"][0]["full_name"] == "Junior Dev"
 
-    response = client.get("/api/v1/candidates", params={"min_salary": 200000}, headers=auth_header(hr))
+    response = client.get("/api/v1/candidates", params={"max_salary": 50000}, headers=auth_header(hr))
     assert response.json()["total"] == 0
+
+    response = client.get("/api/v1/candidates", params={"max_salary": 200000}, headers=auth_header(hr))
+    assert response.json()["total"] == 2
 
 
 def test_candidate_cannot_access_directory(client, db_session):

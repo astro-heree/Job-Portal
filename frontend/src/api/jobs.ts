@@ -46,6 +46,10 @@ export async function applyToJob(jobId: string, coverNote: string): Promise<Appl
 export interface ApplicantFilterParams {
   status?: string;
   q?: string;
+  skills?: string[];
+  location?: string;
+  min_experience_years?: number;
+  max_salary?: number;
   min_ats_rating?: number;
   page?: number;
   page_size?: number;

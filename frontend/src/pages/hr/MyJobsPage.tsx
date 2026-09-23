@@ -6,6 +6,7 @@ import { setJobStatus } from "../../api/jobs";
 import { buttonClasses } from "../../components/Button";
 import { EmptyState } from "../../components/EmptyState";
 import { ErrorBanner } from "../../components/ErrorBanner";
+import { EyeIcon, PencilIcon, PowerIcon } from "../../components/icons";
 import { Layout } from "../../components/Layout";
 import { Pagination } from "../../components/Pagination";
 import { Spinner } from "../../components/Spinner";
@@ -88,19 +89,25 @@ export function MyJobsPage() {
                       {job.is_active ? "Active" : "Inactive"}
                     </span>
                   </div>
-                  <div className="mt-4 flex flex-wrap gap-3 text-sm">
-                    <Link to={`/hr/jobs/${job.id}/applicants`} className="font-medium text-brand-600 hover:underline">
+                  <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+                    <Link
+                      to={`/hr/jobs/${job.id}/applicants`}
+                      className={buttonClasses("primary", "sm")}
+                    >
+                      <EyeIcon className="h-4 w-4" />
                       View applicants
                     </Link>
-                    <Link to={`/hr/jobs/${job.id}/edit`} className="font-medium text-brand-600 hover:underline">
+                    <Link to={`/hr/jobs/${job.id}/edit`} className={buttonClasses("secondary", "sm")}>
+                      <PencilIcon className="h-4 w-4" />
                       Edit
                     </Link>
                     <button
                       type="button"
                       onClick={() => handleToggleStatus(job)}
                       disabled={togglingId === job.id}
-                      className="font-medium text-slate-600 hover:underline disabled:opacity-50"
+                      className={buttonClasses("secondary", "sm")}
                     >
+                      <PowerIcon className="h-4 w-4" />
                       {job.is_active ? "Deactivate" : "Activate"}
                     </button>
                   </div>
