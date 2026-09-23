@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { downloadBlob, getErrorMessage } from "../api/client";
+import { Button } from "./Button";
 import { ErrorBanner } from "./ErrorBanner";
 import { Spinner } from "./Spinner";
 
@@ -55,33 +56,28 @@ export function ResumeViewerDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4 py-8">
-      <div className="flex h-full w-full max-w-3xl flex-col rounded-lg bg-white shadow-lg">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4 py-8 backdrop-blur-[2px]">
+      <div className="flex h-full w-full max-w-3xl flex-col rounded-2xl bg-white shadow-xl ring-1 ring-black/5">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <h2 className="font-semibold text-slate-900">{candidateName}'s resume</h2>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleDownload}
-              disabled={!blob}
-              className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-50"
-            >
+            <Button variant="secondary" size="sm" onClick={handleDownload} disabled={!blob}>
               Download
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
-            >
+            </Button>
+            <Button size="sm" onClick={onClose}>
               Close
-            </button>
+            </Button>
           </div>
         </div>
         <div className="flex-1 overflow-hidden p-4">
           <ErrorBanner message={error} />
           {isLoading && <Spinner label="Loading resume…" />}
           {objectUrl && (
-            <iframe src={objectUrl} title={`${candidateName}'s resume`} className="h-full w-full rounded border border-slate-200" />
+            <iframe
+              src={objectUrl}
+              title={`${candidateName}'s resume`}
+              className="h-full w-full rounded-lg border border-slate-200"
+            />
           )}
         </div>
       </div>

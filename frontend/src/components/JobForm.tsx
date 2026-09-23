@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Button } from "./Button";
 import { ErrorBanner } from "./ErrorBanner";
 import { FormField, FormSelect, FormTextArea } from "./FormField";
 import type { EmploymentType, JobFormValues } from "../types";
@@ -151,13 +152,9 @@ export function JobForm({ initialValues, onSubmit, submitLabel, serverError }: J
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="mt-2 w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
-      >
+      <Button type="submit" disabled={isSubmitting} className="mt-2 w-fit">
         {isSubmitting ? "Saving…" : submitLabel}
-      </button>
+      </Button>
     </form>
   );
 }

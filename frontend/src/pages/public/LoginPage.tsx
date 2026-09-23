@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getErrorMessage } from "../../api/client";
+import { AuthCard } from "../../components/AuthCard";
+import { Button } from "../../components/Button";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { FormField } from "../../components/FormField";
-import { getErrorMessage } from "../../api/client";
 import { homePathForRole, useAuth } from "../../context/AuthContext";
 
 export function LoginPage() {
@@ -35,45 +37,40 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-xl font-semibold text-slate-900">Job Portal</h1>
-        <p className="mb-6 text-sm text-slate-500">Sign in to your account</p>
-
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
-          <ErrorBanner message={error} />
-          <FormField
-            label="Email"
-            type="email"
-            name="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <FormField
-            label="Password"
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:opacity-60"
-          >
-            {isSubmitting ? "Signing in…" : "Sign in"}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-slate-500">
+    <AuthCard
+      title="Welcome back"
+      subtitle="Sign in to your Job Portal account"
+      footer={
+        <>
           Don't have an account?{" "}
-          <Link to="/register" className="font-medium text-blue-600 hover:underline">
+          <Link to="/register" className="font-medium text-brand-600 hover:underline">
             Register
           </Link>
-        </p>
-      </div>
-    </div>
+        </>
+      }
+    >
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+        <ErrorBanner message={error} />
+        <FormField
+          label="Email"
+          type="email"
+          name="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <FormField
+          label="Password"
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button type="submit" disabled={isSubmitting} className="mt-2 w-full">
+          {isSubmitting ? "Signing in…" : "Sign in"}
+        </Button>
+      </form>
+    </AuthCard>
   );
 }

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { listMyJobs } from "../../api/hr";
 import { getErrorMessage } from "../../api/client";
 import { setJobStatus } from "../../api/jobs";
+import { buttonClasses } from "../../components/Button";
 import { EmptyState } from "../../components/EmptyState";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { Layout } from "../../components/Layout";
@@ -47,12 +48,12 @@ export function MyJobsPage() {
 
   return (
     <Layout>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-slate-900">My Jobs</h1>
-        <Link
-          to="/hr/jobs/new"
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        >
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">My Jobs</h1>
+          <p className="mt-1 text-sm text-slate-500">Manage your postings and see what's active.</p>
+        </div>
+        <Link to="/hr/jobs/new" className={buttonClasses("primary")}>
           Post a job
         </Link>
       </div>
@@ -67,7 +68,10 @@ export function MyJobsPage() {
           <>
             <ul className="flex flex-col gap-3">
               {jobs.map((job) => (
-                <li key={job.id} className="rounded-lg border border-slate-200 bg-white p-5">
+                <li
+                  key={job.id}
+                  className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                >
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h2 className="font-semibold text-slate-900">{job.title}</h2>
@@ -76,18 +80,19 @@ export function MyJobsPage() {
                       </p>
                     </div>
                     <span
-                      className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        job.is_active ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"
+                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
+                        job.is_active ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"
                       }`}
                     >
+                      <span className={`h-1.5 w-1.5 rounded-full ${job.is_active ? "bg-emerald-500" : "bg-slate-400"}`} />
                       {job.is_active ? "Active" : "Inactive"}
                     </span>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-3 text-sm">
-                    <Link to={`/hr/jobs/${job.id}/applicants`} className="font-medium text-blue-600 hover:underline">
+                    <Link to={`/hr/jobs/${job.id}/applicants`} className="font-medium text-brand-600 hover:underline">
                       View applicants
                     </Link>
-                    <Link to={`/hr/jobs/${job.id}/edit`} className="font-medium text-blue-600 hover:underline">
+                    <Link to={`/hr/jobs/${job.id}/edit`} className="font-medium text-brand-600 hover:underline">
                       Edit
                     </Link>
                     <button

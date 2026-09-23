@@ -77,9 +77,10 @@ export function CandidateDirectoryPage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900">Candidate Directory</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Candidate Directory</h1>
+      <p className="mt-1 text-sm text-slate-500">Search everyone on the platform, applied or not.</p>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mt-6 grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
         <FormField label="Search" placeholder="Name or headline" value={q} onChange={(e) => setQ(e.target.value)} />
         <FormField label="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
         <FormField
@@ -107,12 +108,12 @@ export function CandidateDirectoryPage() {
       </div>
 
       {selectedIds.size > 0 && (
-        <div className="mt-4 flex items-center gap-3 rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm">
-          <span>{selectedIds.size} selected</span>
+        <div className="mt-4 flex items-center gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-2.5 text-sm">
+          <span className="font-medium text-brand-900">{selectedIds.size} selected</span>
           <button
             type="button"
             onClick={() => setIsBulkEmailOpen(true)}
-            className="font-medium text-blue-700 hover:underline"
+            className="font-medium text-brand-700 hover:underline"
           >
             Email selected
           </button>
@@ -132,7 +133,7 @@ export function CandidateDirectoryPage() {
               {candidates.map((candidate) => (
                 <li
                   key={candidate.user_id}
-                  className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-5 transition hover:border-blue-300 hover:shadow-sm"
+                  className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-brand-300 hover:shadow-md"
                 >
                   <input
                     type="checkbox"

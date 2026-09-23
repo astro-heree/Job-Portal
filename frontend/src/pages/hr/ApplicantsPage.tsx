@@ -101,12 +101,12 @@ export function ApplicantsPage() {
 
   return (
     <Layout>
-      <Link to="/hr/jobs" className="text-sm text-blue-600 hover:underline">
+      <Link to="/hr/jobs" className="text-sm text-brand-600 hover:underline">
         ← Back to my jobs
       </Link>
-      <h1 className="mt-2 text-2xl font-semibold text-slate-900">Applicants</h1>
+      <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-900">Applicants</h1>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-3">
         <FormField label="Search by name or email" value={q} onChange={(e) => setQ(e.target.value)} />
         <FormSelect
           label="Status"
@@ -126,12 +126,12 @@ export function ApplicantsPage() {
       </div>
 
       {selectedIds.size > 0 && (
-        <div className="mt-4 flex items-center gap-3 rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm">
-          <span>{selectedIds.size} selected</span>
+        <div className="mt-4 flex items-center gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-2.5 text-sm">
+          <span className="font-medium text-brand-900">{selectedIds.size} selected</span>
           <button
             type="button"
             onClick={() => setPendingBulkStatus("SHORTLISTED")}
-            className="font-medium text-blue-700 hover:underline"
+            className="font-medium text-brand-700 hover:underline"
           >
             Shortlist
           </button>
@@ -156,7 +156,7 @@ export function ApplicantsPage() {
             <p className="mb-3 text-sm text-slate-500">{total} applicant{total === 1 ? "" : "s"}</p>
             <ul className="flex flex-col gap-3">
               {applicants.map((applicant) => (
-                <li key={applicant.id} className="rounded-lg border border-slate-200 bg-white p-5">
+                <li key={applicant.id} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                   <div className="flex items-start gap-3">
                     <input
                       type="checkbox"
@@ -210,7 +210,7 @@ export function ApplicantsPage() {
                                   name: applicant.candidate_full_name,
                                 })
                               }
-                              className="font-medium text-blue-600 hover:underline"
+                              className="font-medium text-brand-600 hover:underline"
                             >
                               View resume
                             </button>
@@ -219,7 +219,7 @@ export function ApplicantsPage() {
                               onClick={() =>
                                 handleDownloadResume(applicant.candidate_id, applicant.candidate_full_name)
                               }
-                              className="font-medium text-blue-600 hover:underline"
+                              className="font-medium text-brand-600 hover:underline"
                             >
                               Download
                             </button>

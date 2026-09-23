@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { applyToJob, getJob } from "../../api/jobs";
 import { getErrorMessage } from "../../api/client";
+import { Button } from "../../components/Button";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { FormTextArea } from "../../components/FormField";
 import { Layout } from "../../components/Layout";
+import { CheckBadgeIcon } from "../../components/icons";
 import { Spinner } from "../../components/Spinner";
 import type { Job } from "../../types";
 
@@ -68,7 +70,7 @@ export function JobDetailsPage() {
     return (
       <Layout>
         <ErrorBanner message={loadError ?? "Job not found."} />
-        <Link to="/candidate/jobs" className="mt-4 inline-block text-sm text-blue-600 hover:underline">
+        <Link to="/candidate/jobs" className="mt-4 inline-block text-sm text-brand-600 hover:underline">
           Back to search
         </Link>
       </Layout>
@@ -80,15 +82,22 @@ export function JobDetailsPage() {
 
   return (
     <Layout>
-      <Link to="/candidate/jobs" className="text-sm text-blue-600 hover:underline">
+      <Link to="/candidate/jobs" className="text-sm text-brand-600 hover:underline">
         ← Back to search
       </Link>
 
-      <div className="mt-4 rounded-lg border border-slate-200 bg-white p-6">
-        <h1 className="text-2xl font-semibold text-slate-900">{job.title}</h1>
-        <p className="mt-1 text-slate-500">
-          {job.company_name ?? "—"} · {job.location} · {job.employment_type.replace("_", " ")}
-        </p>
+      <div className="mt-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">{job.title}</h1>
+            <p className="mt-1 text-slate-500">
+              {job.company_name ?? "—"} · {job.location}
+            </p>
+          </div>
+          <span className="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
+            {job.employment_type.replace("_", " ")}
+          </span>
+        </div>
         <dl className="mt-4 grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
           {experience && (
             <div>
@@ -117,11 +126,16 @@ export function JobDetailsPage() {
         <p className="mt-6 whitespace-pre-wrap text-sm text-slate-700">{job.description}</p>
       </div>
 
-      <div className="mt-6 rounded-lg border border-slate-200 bg-white p-6">
+      <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         {hasApplied ? (
-          <p className="font-medium text-emerald-700">
-            Application submitted! You can track its status from "My Applications".
-          </p>
+          <div className="flex items-center gap-3 text-emerald-700">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50">
+              <CheckBadgeIcon className="h-5 w-5" />
+            </span>
+            <p className="font-medium">
+              Application submitted! You can track its status from "My Applications".
+            </p>
+          </div>
         ) : (
           <>
             <h2 className="mb-3 font-semibold text-slate-900">Apply to this job</h2>
@@ -134,14 +148,9 @@ export function JobDetailsPage() {
                 onChange={(e) => setCoverNote(e.target.value)}
               />
             </div>
-            <button
-              type="button"
-              onClick={handleApply}
-              disabled={isApplying}
-              className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
-            >
+            <Button onClick={handleApply} disabled={isApplying} className="mt-4">
               {isApplying ? "Submitting…" : "Submit application"}
-            </button>
+            </Button>
           </>
         )}
       </div>

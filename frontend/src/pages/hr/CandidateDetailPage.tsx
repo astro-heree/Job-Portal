@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { downloadCandidateResume, getCandidate } from "../../api/candidates";
 import { downloadBlob, getErrorMessage } from "../../api/client";
 import { sendBulkMessage } from "../../api/messages";
+import { Button } from "../../components/Button";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { FormField, FormTextArea } from "../../components/FormField";
 import { Layout } from "../../components/Layout";
@@ -85,12 +86,12 @@ export function CandidateDetailPage() {
 
   return (
     <Layout>
-      <Link to="/hr/candidates" className="text-sm text-blue-600 hover:underline">
+      <Link to="/hr/candidates" className="text-sm text-brand-600 hover:underline">
         ← Back to directory
       </Link>
 
-      <div className="mt-4 rounded-lg border border-slate-200 bg-white p-6">
-        <h1 className="text-2xl font-semibold text-slate-900">{candidate.full_name}</h1>
+      <div className="mt-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{candidate.full_name}</h1>
         <p className="mt-1 text-slate-500">{candidate.email}</p>
         {candidate.headline && <p className="mt-2 font-medium text-slate-700">{candidate.headline}</p>}
 
@@ -109,6 +110,12 @@ export function CandidateDetailPage() {
             <dt className="text-slate-500">Phone</dt>
             <dd className="font-medium text-slate-800">{candidate.phone ?? "—"}</dd>
           </div>
+          <div>
+            <dt className="text-slate-500">Expected salary</dt>
+            <dd className="font-medium text-slate-800">
+              {candidate.expected_salary != null ? `$${candidate.expected_salary.toLocaleString()}` : "—"}
+            </dd>
+          </div>
         </dl>
 
         {candidate.skills.length > 0 && (
@@ -125,20 +132,10 @@ export function CandidateDetailPage() {
           <ErrorBanner message={downloadError} />
           {candidate.has_resume ? (
             <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setIsResumeViewerOpen(true)}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                View resume
-              </button>
-              <button
-                type="button"
-                onClick={handleDownloadResume}
-                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
-              >
+              <Button onClick={() => setIsResumeViewerOpen(true)}>View resume</Button>
+              <Button variant="secondary" onClick={handleDownloadResume}>
                 Download
-              </button>
+              </Button>
             </div>
           ) : (
             <p className="text-sm text-slate-500">No resume on file.</p>
@@ -146,24 +143,20 @@ export function CandidateDetailPage() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-lg border border-slate-200 bg-white p-6">
+      <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="mb-3 font-semibold text-slate-900">Send a message</h2>
         <form onSubmit={handleSendMessage} className="flex flex-col gap-4">
           <ErrorBanner message={messageError} />
           {messageSent && (
-            <p className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
               Message sent.
             </p>
           )}
           <FormField label="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} />
           <FormTextArea label="Message" rows={4} value={body} onChange={(e) => setBody(e.target.value)} />
-          <button
-            type="submit"
-            disabled={isSendingMessage}
-            className="w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
-          >
+          <Button type="submit" disabled={isSendingMessage} className="w-fit">
             {isSendingMessage ? "Sending…" : "Send message"}
-          </button>
+          </Button>
         </form>
       </div>
 

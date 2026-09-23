@@ -54,8 +54,8 @@ export function EditJobPage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900">Edit job</h1>
-      <div className="mt-6 max-w-2xl rounded-lg border border-slate-200 bg-white p-6">
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Edit job</h1>
+      <div className="mt-6 max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <JobForm initialValues={job} onSubmit={handleSubmit} submitLabel="Save changes" serverError={serverError} />
       </div>
     </Layout>

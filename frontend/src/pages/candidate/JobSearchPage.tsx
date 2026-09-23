@@ -53,9 +53,10 @@ export function JobSearchPage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900">Find jobs</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Find jobs</h1>
+      <p className="mt-1 text-sm text-slate-500">Search open roles and apply in a couple of clicks.</p>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-3">
         <FormField label="Search" placeholder="Title or description" value={q} onChange={(e) => setQ(e.target.value)} />
         <FormField label="Location" placeholder="City or Remote" value={location} onChange={(e) => setLocation(e.target.value)} />
         <FormSelect
@@ -86,15 +87,18 @@ export function JobSearchPage() {
                 <li key={job.id}>
                   <Link
                     to={`/candidate/jobs/${job.id}`}
-                    className="block rounded-lg border border-slate-200 bg-white p-5 transition hover:border-blue-300 hover:shadow-sm"
+                    className="block rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:border-brand-300 hover:shadow-md"
                   >
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between gap-4">
                       <div>
                         <h2 className="font-semibold text-slate-900">{job.title}</h2>
-                        <p className="text-sm text-slate-500">
-                          {job.company_name ?? "—"} · {job.location} · {job.employment_type.replace("_", " ")}
+                        <p className="mt-0.5 text-sm text-slate-500">
+                          {job.company_name ?? "—"} · {job.location}
                         </p>
                       </div>
+                      <span className="shrink-0 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700">
+                        {job.employment_type.replace("_", " ")}
+                      </span>
                     </div>
                     {job.skills.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-1.5">

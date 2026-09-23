@@ -22,8 +22,9 @@ export function CreateJobPage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900">Post a job</h1>
-      <div className="mt-6 max-w-2xl rounded-lg border border-slate-200 bg-white p-6">
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Post a job</h1>
+      <p className="mt-1 text-sm text-slate-500">Fill in the details candidates will see.</p>
+      <div className="mt-6 max-w-2xl rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <JobForm onSubmit={handleSubmit} submitLabel="Post job" serverError={serverError} />
       </div>
     </Layout>

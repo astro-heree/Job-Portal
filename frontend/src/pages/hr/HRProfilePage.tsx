@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { getMyProfile, updateMyProfile } from "../../api/hr";
 import { getErrorMessage } from "../../api/client";
+import { Button } from "../../components/Button";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { FormField } from "../../components/FormField";
 import { Layout } from "../../components/Layout";
@@ -64,17 +65,19 @@ export function HRProfilePage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900">My Profile</h1>
-      <ErrorBanner message={loadError} />
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">My Profile</h1>
+      <div className="mt-6">
+        <ErrorBanner message={loadError} />
+      </div>
 
       {profile && (
         <form
           onSubmit={handleSubmit}
-          className="mt-6 flex max-w-xl flex-col gap-4 rounded-lg border border-slate-200 bg-white p-6"
+          className="mt-6 flex max-w-xl flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
         >
           <ErrorBanner message={saveError} />
           {saveSuccess && (
-            <p className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
               Profile updated.
             </p>
           )}
@@ -82,13 +85,9 @@ export function HRProfilePage() {
           <FormField label="Email" value={profile.email} disabled />
           <FormField label="Company name" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
           <FormField label="Designation" value={designation} onChange={(e) => setDesignation(e.target.value)} />
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="mt-2 w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
-          >
+          <Button type="submit" disabled={isSaving} className="mt-2 w-fit">
             {isSaving ? "Saving…" : "Save changes"}
-          </button>
+          </Button>
         </form>
       )}
     </Layout>

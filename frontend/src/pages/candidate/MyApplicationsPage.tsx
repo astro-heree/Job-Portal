@@ -34,9 +34,10 @@ export function MyApplicationsPage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900">My Applications</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">My Applications</h1>
+      <p className="mt-1 text-sm text-slate-500">Track the status of every job you've applied to.</p>
 
-      <div className="mt-6 max-w-xs">
+      <div className="mt-6 max-w-xs rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <FormSelect
           label="Filter by status"
           value={status}
@@ -66,7 +67,7 @@ export function MyApplicationsPage() {
               {applications.map((application) => (
                 <li
                   key={application.id}
-                  className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-5"
+                  className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
                 >
                   <div>
                     <h2 className="font-semibold text-slate-900">{application.job_title}</h2>

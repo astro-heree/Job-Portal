@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { downloadMyResume, getMyProfile, updateMyProfile, uploadResume } from "../../api/candidates";
 import { getErrorMessage } from "../../api/client";
+import { Button } from "../../components/Button";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { FormField } from "../../components/FormField";
 import { Layout } from "../../components/Layout";
@@ -97,14 +98,17 @@ export function CandidateProfilePage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900">My Profile</h1>
-      <ErrorBanner message={loadError} />
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">My Profile</h1>
+      <p className="mt-1 text-sm text-slate-500">Keep your details current so HR can find and reach you.</p>
+      <div className="mt-6">
+        <ErrorBanner message={loadError} />
+      </div>
 
       {profile && (
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-4 rounded-lg border border-slate-200 bg-white p-6 lg:col-span-2"
+            className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2"
           >
             <ErrorBanner message={saveError} />
             {saveSuccess && (
@@ -139,29 +143,21 @@ export function CandidateProfilePage() {
               value={expectedSalary}
               onChange={(e) => setExpectedSalary(e.target.value)}
             />
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="mt-2 w-fit rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
-            >
+            <Button type="submit" disabled={isSaving} className="mt-2 w-fit">
               {isSaving ? "Saving…" : "Save changes"}
-            </button>
+            </Button>
           </form>
 
-          <div className="rounded-lg border border-slate-200 bg-white p-6">
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="mb-3 font-semibold text-slate-900">Resume</h2>
             <ErrorBanner message={resumeError} />
             <p className="mb-3 text-sm text-slate-500">
               {profile.has_resume ? "A resume is on file (PDF)." : "No resume uploaded yet."}
             </p>
             {profile.has_resume && (
-              <button
-                type="button"
-                onClick={() => setIsResumeViewerOpen(true)}
-                className="mb-3 rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
-              >
+              <Button variant="secondary" size="sm" onClick={() => setIsResumeViewerOpen(true)} className="mb-3">
                 View resume
-              </button>
+              </Button>
             )}
             <input
               ref={fileInputRef}

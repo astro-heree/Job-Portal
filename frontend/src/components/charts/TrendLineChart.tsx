@@ -31,10 +31,10 @@ export function TrendLineChart({ data }: { data: ApplicationsTrendPoint[] }) {
         stroke="#e2e8f0"
         strokeWidth={1}
       />
-      <path d={areaPath} fill="#dbeafe" opacity={0.6} />
-      <path d={linePath} fill="none" stroke="#2563eb" strokeWidth={2} />
+      <path d={areaPath} fill="#e0e7ff" opacity={0.7} />
+      <path d={linePath} fill="none" stroke="#4f46e5" strokeWidth={2} />
       {points.map(({ x, y, point }) => (
-        <circle key={point.date} cx={x} cy={y} r={3} fill="#2563eb">
+        <circle key={point.date} cx={x} cy={y} r={3} fill="#4f46e5">
           <title>
             {point.date}: {point.count}
           </title>

@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getErrorMessage, getFieldErrors } from "../../api/client";
+import { AuthCard } from "../../components/AuthCard";
+import { Button } from "../../components/Button";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { FormField, FormSelect } from "../../components/FormField";
-import { getErrorMessage, getFieldErrors } from "../../api/client";
 import { homePathForRole, useAuth } from "../../context/AuthContext";
 import type { UserRole } from "../../types";
 
@@ -79,88 +81,83 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
-      <div className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-xl font-semibold text-slate-900">Create your account</h1>
-        <p className="mb-6 text-sm text-slate-500">Join Job Portal as an HR or Candidate</p>
-
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
-          <ErrorBanner message={formError} />
-
-          <FormSelect
-            label="I am registering as"
-            name="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value as UserRole)}
-          >
-            <option value="CANDIDATE">Candidate</option>
-            <option value="HR">HR</option>
-          </FormSelect>
-
-          <FormField
-            label="Full name"
-            name="full_name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            error={fieldErrors.full_name}
-          />
-
-          {role === "HR" && (
-            <FormField
-              label="Company name"
-              name="company_name"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              error={fieldErrors.company_name}
-            />
-          )}
-
-          <FormField
-            label="Email"
-            type="email"
-            name="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={fieldErrors.email}
-          />
-
-          <FormField
-            label="Password"
-            type="password"
-            name="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            error={fieldErrors.password}
-          />
-
-          <FormField
-            label="Confirm password"
-            type="password"
-            name="confirmPassword"
-            autoComplete="new-password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            error={fieldErrors.confirmPassword}
-          />
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:opacity-60"
-          >
-            {isSubmitting ? "Creating account…" : "Create account"}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-slate-500">
+    <AuthCard
+      title="Create your account"
+      subtitle="Join Job Portal as an HR or Candidate"
+      footer={
+        <>
           Already have an account?{" "}
-          <Link to="/login" className="font-medium text-blue-600 hover:underline">
+          <Link to="/login" className="font-medium text-brand-600 hover:underline">
             Sign in
           </Link>
-        </p>
-      </div>
-    </div>
+        </>
+      }
+    >
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
+        <ErrorBanner message={formError} />
+
+        <FormSelect
+          label="I am registering as"
+          name="role"
+          value={role}
+          onChange={(e) => setRole(e.target.value as UserRole)}
+        >
+          <option value="CANDIDATE">Candidate</option>
+          <option value="HR">HR</option>
+        </FormSelect>
+
+        <FormField
+          label="Full name"
+          name="full_name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          error={fieldErrors.full_name}
+        />
+
+        {role === "HR" && (
+          <FormField
+            label="Company name"
+            name="company_name"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            error={fieldErrors.company_name}
+          />
+        )}
+
+        <FormField
+          label="Email"
+          type="email"
+          name="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={fieldErrors.email}
+        />
+
+        <FormField
+          label="Password"
+          type="password"
+          name="password"
+          autoComplete="new-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={fieldErrors.password}
+        />
+
+        <FormField
+          label="Confirm password"
+          type="password"
+          name="confirmPassword"
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          error={fieldErrors.confirmPassword}
+        />
+
+        <Button type="submit" disabled={isSubmitting} className="mt-2 w-full">
+          {isSubmitting ? "Creating account…" : "Create account"}
+        </Button>
+      </form>
+    </AuthCard>
   );
 }

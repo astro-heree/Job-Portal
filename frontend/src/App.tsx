@@ -35,7 +35,7 @@ function NotFoundPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-3 text-slate-600">
       <p>Page not found.</p>
-      <Link to="/" className="font-medium text-blue-600 hover:underline">
+      <Link to="/" className="font-medium text-brand-600 hover:underline">
         Go home
       </Link>
     </div>

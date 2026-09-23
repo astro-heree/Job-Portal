@@ -42,7 +42,8 @@ export function InboxPage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900">Inbox</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Inbox</h1>
+      <p className="mt-1 text-sm text-slate-500">Messages from HR about your applications.</p>
 
       <div className="mt-6">
         <ErrorBanner message={error} />
@@ -57,14 +58,14 @@ export function InboxPage() {
                 <li
                   key={message.id}
                   onClick={() => handleOpen(message)}
-                  className={`cursor-pointer rounded-lg border p-5 transition ${
-                    message.read_at ? "border-slate-200 bg-white" : "border-blue-200 bg-blue-50"
+                  className={`cursor-pointer rounded-xl border p-5 shadow-sm transition-all hover:shadow-md ${
+                    message.read_at ? "border-slate-200 bg-white" : "border-brand-200 bg-brand-50"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <h2 className="font-semibold text-slate-900">{message.subject}</h2>
                     {!message.read_at && (
-                      <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-white">
+                      <span className="rounded-full bg-brand-600 px-2 py-0.5 text-xs font-medium text-white">
                         New
                       </span>
                     )}
