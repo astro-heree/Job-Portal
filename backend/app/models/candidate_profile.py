@@ -1,7 +1,7 @@
 import uuid
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ARRAY, ForeignKey, Index, Numeric, String
+from sqlalchemy import ARRAY, ForeignKey, Index, Integer, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -25,6 +25,7 @@ class CandidateProfile(Base):
     experience_years: Mapped[float | None] = mapped_column(Numeric(4, 1))
     skills: Mapped[list[str]] = mapped_column(ARRAY(String), default=list)
     location: Mapped[str | None] = mapped_column(String(255), index=True)
+    expected_salary: Mapped[int | None] = mapped_column(Integer)
     resume_filename: Mapped[str | None] = mapped_column(String(255))
 
     user: Mapped["User"] = relationship(back_populates="candidate_profile")

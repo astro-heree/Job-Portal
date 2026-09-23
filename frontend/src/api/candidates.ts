@@ -7,6 +7,7 @@ export interface CandidateProfileUpdatePayload {
   experience_years?: number | null;
   skills?: string[];
   location?: string | null;
+  expected_salary?: number | null;
 }
 
 export async function getMyProfile(): Promise<CandidateProfile> {
@@ -44,6 +45,7 @@ export interface CandidateSearchParams {
   skills?: string[];
   location?: string;
   min_experience_years?: number;
+  min_salary?: number;
   page?: number;
   page_size?: number;
 }

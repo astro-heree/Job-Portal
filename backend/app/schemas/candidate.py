@@ -12,6 +12,7 @@ class CandidateProfileOut(BaseModel):
     experience_years: float | None
     skills: list[str]
     location: str | None
+    expected_salary: int | None
     has_resume: bool
 
     model_config = {"from_attributes": False}
@@ -23,6 +24,7 @@ class CandidateProfileUpdateRequest(BaseModel):
     experience_years: float | None = Field(default=None, ge=0, le=60)
     skills: list[str] | None = None
     location: str | None = Field(default=None, max_length=255)
+    expected_salary: int | None = Field(default=None, ge=0)
 
     @model_validator(mode="after")
     def dedupe_skills(self) -> "CandidateProfileUpdateRequest":

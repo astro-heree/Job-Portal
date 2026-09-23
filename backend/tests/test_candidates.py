@@ -17,7 +17,12 @@ def test_candidate_can_update_own_profile(client, db_session):
 
     response = client.patch(
         "/api/v1/candidates/me",
-        json={"headline": "Senior Engineer", "skills": ["Python", "Python", " Go "], "location": "Remote"},
+        json={
+            "headline": "Senior Engineer",
+            "skills": ["Python", "Python", " Go "],
+            "location": "Remote",
+            "expected_salary": 120000,
+        },
         headers=auth_header(candidate),
     )
 
@@ -26,6 +31,7 @@ def test_candidate_can_update_own_profile(client, db_session):
     assert body["headline"] == "Senior Engineer"
     assert sorted(body["skills"]) == ["Go", "Python"]
     assert body["location"] == "Remote"
+    assert body["expected_salary"] == 120000
 
 
 def test_hr_cannot_access_candidate_self_endpoints(client, db_session):
@@ -50,6 +56,26 @@ def test_hr_can_search_candidate_directory(client, db_session):
 
     response = client.get("/api/v1/candidates", params={"location": "New York"}, headers=auth_header(hr))
     assert response.json()["total"] == 1
+
+
+def test_hr_can_filter_directory_by_experience_and_salary(client, db_session):
+    hr = create_hr(db_session)
+    create_candidate(db_session, full_name="Junior Dev", experience_years=1, expected_salary=60000)
+    create_candidate(db_session, full_name="Senior Dev", experience_years=8, expected_salary=150000)
+
+    response = client.get(
+        "/api/v1/candidates", params={"min_experience_years": 5}, headers=auth_header(hr)
+    )
+    assert response.status_code == 200
+    assert response.json()["total"] == 1
+    assert response.json()["items"][0]["full_name"] == "Senior Dev"
+
+    response = client.get("/api/v1/candidates", params={"min_salary": 100000}, headers=auth_header(hr))
+    assert response.json()["total"] == 1
+    assert response.json()["items"][0]["full_name"] == "Senior Dev"
+
+    response = client.get("/api/v1/candidates", params={"min_salary": 200000}, headers=auth_header(hr))
+    assert response.json()["total"] == 0
 
 
 def test_candidate_cannot_access_directory(client, db_session):

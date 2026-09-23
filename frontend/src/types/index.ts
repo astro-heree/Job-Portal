@@ -103,6 +103,7 @@ export interface CandidateProfile {
   experience_years: number | null;
   skills: string[];
   location: string | null;
+  expected_salary: number | null;
   has_resume: boolean;
 }
 

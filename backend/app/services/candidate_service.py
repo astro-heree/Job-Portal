@@ -21,6 +21,7 @@ def _to_out(user: User) -> CandidateProfileOut:
         experience_years=profile.experience_years if profile else None,
         skills=profile.skills if profile else [],
         location=profile.location if profile else None,
+        expected_salary=profile.expected_salary if profile else None,
         has_resume=bool(profile and profile.resume_filename),
     )
 
@@ -108,6 +109,7 @@ def search_candidates(
     skills: list[str] | None,
     location: str | None,
     min_experience_years: float | None,
+    min_salary: int | None,
     page: int,
     page_size: int,
 ) -> tuple[list[CandidateProfileOut], int]:
@@ -130,6 +132,8 @@ def search_candidates(
         query = query.filter(CandidateProfile.location.ilike(f"%{location}%"))
     if min_experience_years is not None:
         query = query.filter(CandidateProfile.experience_years >= min_experience_years)
+    if min_salary is not None:
+        query = query.filter(CandidateProfile.expected_salary >= min_salary)
 
     total = query.count()
     users = query.order_by(User.full_name).offset((page - 1) * page_size).limit(page_size).all()

@@ -49,6 +49,7 @@ def create_candidate(db: Session, **overrides) -> User:
         "headline": overrides.pop("headline", None),
         "phone": overrides.pop("phone", None),
         "resume_filename": overrides.pop("resume_filename", None),
+        "expected_salary": overrides.pop("expected_salary", None),
     }
     user = User(
         email=email,

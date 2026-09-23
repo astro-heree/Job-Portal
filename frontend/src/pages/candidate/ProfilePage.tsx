@@ -17,6 +17,7 @@ export function CandidateProfilePage() {
   const [location, setLocation] = useState("");
   const [experienceYears, setExperienceYears] = useState("");
   const [skillsInput, setSkillsInput] = useState("");
+  const [expectedSalary, setExpectedSalary] = useState("");
 
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -35,6 +36,7 @@ export function CandidateProfilePage() {
         setLocation(data.location ?? "");
         setExperienceYears(data.experience_years != null ? String(data.experience_years) : "");
         setSkillsInput(data.skills.join(", "));
+        setExpectedSalary(data.expected_salary != null ? String(data.expected_salary) : "");
       })
       .catch((err) => setLoadError(getErrorMessage(err)))
       .finally(() => setIsLoading(false));
@@ -55,6 +57,7 @@ export function CandidateProfilePage() {
           .split(",")
           .map((s) => s.trim())
           .filter(Boolean),
+        expected_salary: expectedSalary.trim() ? Number(expectedSalary) : null,
       });
       setProfile(updated);
       setSaveSuccess(true);
@@ -126,6 +129,13 @@ export function CandidateProfilePage() {
               value={skillsInput}
               onChange={(e) => setSkillsInput(e.target.value)}
               placeholder="Python, React, SQL"
+            />
+            <FormField
+              label="Expected salary ($)"
+              type="number"
+              min={0}
+              value={expectedSalary}
+              onChange={(e) => setExpectedSalary(e.target.value)}
             />
             <button
               type="submit"
