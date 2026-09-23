@@ -95,24 +95,26 @@ something else on this machine.
 
 ## Test credentials
 
-All seeded accounts share the password `Password123!`.
+| Role | Email | Password | Notes |
+|---|---|---|---|
+| HR | `admin@test.com` | `Admin@1234` | Acme Corp — owns 4 jobs (3 active, 1 inactive), has applicants across all three statuses |
+| Candidate | `user@test.com` | `User@1234` | Backend Developer, strong match for `admin@test.com`'s Backend Engineer posting |
+| HR | `hr2@jobportal.dev` | `Password123!` | Globex Inc — owns 4 jobs (3 active, 1 inactive) |
+| Candidate | `candidate2@jobportal.dev` | `Password123!` | Frontend Developer |
+| Candidate | `candidate3@jobportal.dev` | `Password123!` | Full Stack Engineer |
+| Candidate | `candidate4@jobportal.dev` | `Password123!` | Data Engineer |
+| Candidate | `candidate5@jobportal.dev` | `Password123!` | Junior Developer |
+| Candidate | `candidate6@jobportal.dev` | `Password123!` | DevOps Engineer |
 
-| Role | Email | Notes |
-|---|---|---|
-| HR | `hr1@jobportal.dev` | Acme Corp — owns 4 jobs (3 active, 1 inactive), has applicants across all three statuses |
-| HR | `hr2@jobportal.dev` | Globex Inc — owns 4 jobs (3 active, 1 inactive) |
-| Candidate | `candidate1@jobportal.dev` | Backend Developer, strong match for HR1's Backend Engineer posting |
-| Candidate | `candidate2@jobportal.dev` | Frontend Developer |
-| Candidate | `candidate3@jobportal.dev` | Full Stack Engineer |
-| Candidate | `candidate4@jobportal.dev` | Data Engineer |
-| Candidate | `candidate5@jobportal.dev` | Junior Developer |
-| Candidate | `candidate6@jobportal.dev` | DevOps Engineer |
+The primary HR and Candidate accounts (`admin@test.com` / `user@test.com`) use the exact
+credentials named in the assignment brief; the rest of the demo accounts share `Password123!`
+so the whole roster doesn't need memorizing.
 
 You can also register a fresh account of either role from the app itself.
 
 ## Feature walkthrough
 
-### As HR (e.g. `hr1@jobportal.dev`)
+### As HR (e.g. `admin@test.com`)
 
 1. **Dashboard** — total/active job counts, applicant status breakdown, and a 14-day
    applications trend chart.
@@ -125,7 +127,7 @@ You can also register a fresh account of either role from the app itself.
    a computed 1–5 star match rating (see [ats.py](backend/app/core/ats.py)), filterable by
    status or by candidate name/email. Change one applicant's status from its dropdown, or
    select several with the checkboxes and bulk shortlist/reject (with a confirmation step).
-   Download a candidate's resume if they've uploaded one.
+   View or download a candidate's resume if they've uploaded one.
 5. **Candidates** — a directory of every candidate on the platform, independent of whether
    they've applied to your jobs. Filter by name/headline, location, skills (a case-insensitive
    "includes" match — searching "script" finds "TypeScript"), minimum years of experience, and
@@ -137,7 +139,7 @@ You can also register a fresh account of either role from the app itself.
    inline, not just downloaded) or download it, or send them a real in-app message.
 6. **Profile** — edit your company name and designation.
 
-### As a Candidate (e.g. `candidate1@jobportal.dev`)
+### As a Candidate (e.g. `user@test.com`)
 
 1. **Dashboard** — your application counts by status and unread message count.
 2. **Find Jobs** — search by keyword, filter by location or employment type; only active jobs
@@ -154,7 +156,7 @@ You can also register a fresh account of either role from the app itself.
 ### Cross-tenant access control (worth trying deliberately)
 
 Log in as `hr2@jobportal.dev` and try to edit a job or change an applicant's status on one of
-`hr1@jobportal.dev`'s jobs by editing the URL (e.g. `/hr/jobs/<hr1's-job-id>/edit`). It's
+`admin@test.com`'s jobs by editing the URL (e.g. `/hr/jobs/<that-job-id>/edit`). It's
 rejected with a 403 from the backend regardless of what the frontend would otherwise allow —
 role alone (`require_role(HR)`) only proves "this is an HR account", not "this HR account owns
 this job"; ownership is checked separately in the service layer for every job- and
