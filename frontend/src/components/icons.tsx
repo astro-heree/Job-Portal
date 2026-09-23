@@ -89,3 +89,15 @@ export function PowerIcon(props: SVGProps<SVGSVGElement>) {
     </Icon>
   );
 }
+
+export function ArrowUpTrayIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon {...props}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 16.5v1.5A2.25 2.25 0 0 0 5.25 20.25h13.5A2.25 2.25 0 0 0 21 18v-1.5M7.5 8.25 12 3.75m0 0 4.5 4.5M12 3.75v12"
+      />
+    </Icon>
+  );
+}

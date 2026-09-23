@@ -4,6 +4,7 @@ import { getErrorMessage } from "../../api/client";
 import { Button } from "../../components/Button";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { FormField } from "../../components/FormField";
+import { ArrowUpTrayIcon, DocumentIcon } from "../../components/icons";
 import { Layout } from "../../components/Layout";
 import { ResumeViewerDialog } from "../../components/ResumeViewerDialog";
 import { Spinner } from "../../components/Spinner";
@@ -149,25 +150,57 @@ export function CandidateProfilePage() {
           </form>
 
           <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-3 font-semibold text-slate-900">Resume</h2>
-            <ErrorBanner message={resumeError} />
-            <p className="mb-3 text-sm text-slate-500">
-              {profile.has_resume ? "A resume is on file (PDF)." : "No resume uploaded yet."}
-            </p>
-            {profile.has_resume && (
-              <Button variant="secondary" size="sm" onClick={() => setIsResumeViewerOpen(true)} className="mb-3">
-                View resume
-              </Button>
+            <h2 className="font-semibold text-slate-900">Resume</h2>
+            <p className="mt-1 text-sm text-slate-500">PDF only, up to 5MB.</p>
+
+            <div className="mt-4">
+              <ErrorBanner message={resumeError} />
+            </div>
+
+            {profile.has_resume ? (
+              <div className="mt-4 flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                  <DocumentIcon className="h-5 w-5" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-slate-800">Resume on file</p>
+                  <p className="text-xs text-slate-500">Ready to view or share with HR</p>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-4 flex flex-col items-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50/50 py-6 text-center">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                  <ArrowUpTrayIcon className="h-5 w-5" />
+                </span>
+                <p className="text-sm text-slate-500">No resume uploaded yet</p>
+              </div>
             )}
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {profile.has_resume && (
+                <Button variant="secondary" size="sm" onClick={() => setIsResumeViewerOpen(true)}>
+                  View resume
+                </Button>
+              )}
+              <Button
+                variant={profile.has_resume ? "secondary" : "primary"}
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploadingResume}
+              >
+                <ArrowUpTrayIcon className="h-4 w-4" />
+                {isUploadingResume ? "Uploading…" : profile.has_resume ? "Replace" : "Upload resume"}
+              </Button>
+            </div>
+
             <input
               ref={fileInputRef}
               type="file"
               accept="application/pdf"
               onChange={handleResumeSelected}
               disabled={isUploadingResume}
-              className="text-sm"
+              className="hidden"
             />
-            {isUploadingResume && <p className="mt-2 text-sm text-slate-500">Uploading…</p>}
           </div>
         </div>
       )}
