@@ -126,9 +126,15 @@ You can also register a fresh account of either role from the app itself.
    status or by candidate name/email. Change one applicant's status from its dropdown, or
    select several with the checkboxes and bulk shortlist/reject (with a confirmation step).
    Download a candidate's resume if they've uploaded one.
-5. **Candidates** — a directory of every candidate on the platform, searchable by name/
-   headline/skills/location, independent of whether they've applied to your jobs. Open a
-   candidate's profile to view their details, download their resume, or send them a message.
+5. **Candidates** — a directory of every candidate on the platform, independent of whether
+   they've applied to your jobs. Filter by name/headline, location, skills (a case-insensitive
+   "includes" match — searching "script" finds "TypeScript"), minimum years of experience, and
+   minimum expected salary. Select several candidates with the checkboxes and use **Email
+   selected** to try the bulk-email flow — it's an intentional beta placeholder (see
+   [Known limitations](#known-limitations)): it collects a subject/message and confirms
+   "N candidates will receive the email shortly", but nothing is actually sent. Open a
+   candidate's profile to view their full details, **view their resume in-app** (rendered
+   inline, not just downloaded) or download it, or send them a real in-app message.
 6. **Profile** — edit your company name and designation.
 
 ### As a Candidate (e.g. `candidate1@jobportal.dev`)
@@ -141,8 +147,9 @@ You can also register a fresh account of either role from the app itself.
 4. **My Applications** — every job you've applied to, with its current status, filterable by
    status.
 5. **Inbox** — messages from HR; opening an unread message marks it read.
-6. **Profile** — edit headline, phone, location, experience, and skills; upload a resume
-   (PDF only, 5MB max).
+6. **Profile** — edit headline, phone, location, experience, skills, and expected salary
+   (used by HR's directory filter); upload a resume (PDF only, 5MB max) and **view it in-app**
+   afterward, not just re-download it.
 
 ### Cross-tenant access control (worth trying deliberately)
 
@@ -155,7 +162,7 @@ application-scoped endpoint.
 
 ## Running tests
 
-### Backend (75 tests, pytest)
+### Backend (78 tests, pytest)
 
 Runs against a real Postgres database (a separate `<db>_test` database, auto-created), not
 SQLite — the schema uses Postgres `ARRAY` columns with GIN indexes that SQLite doesn't
@@ -241,7 +248,9 @@ security and testing specifically):
 - **No password reset or email verification.** There's no email provider in this stack, so
   registration trusts any syntactically valid email as-is.
 - **No real email delivery.** The "inbox" is entirely in-app; HR's messages never leave the
-  database.
+  database. The candidate directory's **bulk email** action is an even more explicit version
+  of this same gap: it's a UI-only beta stub (subject/message form, a client-side confirmation)
+  with no backend endpoint behind it at all — nothing is sent, logged, or persisted.
 - **The ATS match score is a transparent, structured-data heuristic** (skill overlap +
   experience-range fit), not resume parsing or NLP. It's honest about what it is, not a claim
   of AI matching.
